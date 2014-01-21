@@ -1,0 +1,4 @@
+AuthType Basic
+AuthName "Accesso Pannello Amministrazione"
+require valid-user
+AuthUserFile "/home/curtiptr/.htpasswds/public_html/botanica/admin/passwd"

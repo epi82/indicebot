@@ -1,0 +1,703 @@
+<?
+include ("config.inc.php");
+include ("top_foot.inc.php");
+include ("functions.php");
+//intestazione
+top();
+$ultimoins=data();
+
+$filtro=($_GET['filtro']!="")? $_GET['filtro'] :"";
+$tipo=($_GET['tipo']!="")? $_GET['tipo'] :"";
+$multicampo=($_GET['multicampo']!="")? $_GET['multicampo'] :"";
+$parola=($_GET['parola']!="")? $_GET['parola'] :"";
+$selezione=($_GET['selezione']!="")? $_GET['selezione'] :"link1";
+$letter=($_GET['letter']!="")? $_GET['letter'] :"A";
+
+//connessione al db
+$db = mysql_connect($db_host, $db_user, $db_password);
+
+if ($db == FALSE)
+	die ("Errore nella connessione. Verificare i parametri nel file config.inc.php");
+mysql_select_db($db_name, $db)
+or die ("Errore nella selezione del database. Verificare i parametri nel file config.inc.php");
+
+switch ($selezione)
+{
+	case 'link1':
+		$ordi1=genere;
+		$ordi2=specie;
+		$colonna1=Genere;
+		$colonna2=Specie;
+	  break;
+	case 'link2':
+		$ordi2=genere;
+		$ordi1=specie;
+		$colonna2=Genere;
+		$colonna1=Specie;
+    break;
+  case 'link3':
+    $ordi1=nomecomune;
+    $ordi2=genere;
+    $colonna1=Genere;
+    $colonna2=Specie;
+    break;
+}
+
+if ($multicampo=="") 
+{
+	if ($filtro!="")
+			{
+				switch ($filtro)
+				{
+					case 'amint':
+						$campo_filtro="scheda";
+						$valore_filtro="A";
+					break;
+					case 'breve':
+						$campo_filtro="scheda";
+						$valore_filtro="B";
+					break;
+					case 'sino':
+						$campo_filtro="scheda";
+						$valore_filtro="S";
+					break;
+					case 'offi':
+						$campo_filtro="ca";
+						$valore_filtro="PO";
+					break;
+					case 'comme':
+						$campo_filtro="ca";
+						$valore_filtro="PC";
+					break;
+					case 'commeoffi':
+						$campo_filtro="ca";
+						$valore_filtro="PCO";
+					break;
+					case 'vele':
+						$campo_filtro="ca";
+						$valore_filtro="PV";
+					break;
+					case 'veleoffi':
+						$campo_filtro="ca";
+						$valore_filtro="PVO";
+					break;
+					case 'senza':
+						$campo_filtro="ca";
+						$valore_filtro="P";
+					break;
+				}
+			$query = "SELECT scheda, genere, specie, autore, ca, famiglia, nomecomune, topic, datains FROM archivio WHERE " . $campo_filtro . " like '{$valore_filtro}' ORDER BY " . $ordi1 . "," . $ordi2;
+			}
+
+	else	
+			{
+			$query = "SELECT scheda, genere, specie, autore, ca, famiglia, nomecomune, topic, datains FROM archivio WHERE " . $ordi1 . " like '{$letter}%' ORDER BY " . $ordi1 . "," . $ordi2;
+			}
+}
+
+else 
+{
+	$query = "SELECT scheda, genere, specie, autore, ca, famiglia, nomecomune, topic, datains FROM archivio WHERE ";
+  switch ($tipo)
+    {
+    case 'genere':
+      $query .= "genere like '%{$multicampo}%'";
+      break;
+    case 'specie':
+      $query .= "specie like '%{$multicampo}%'";
+      break;
+    case 'famiglia':
+      $query .= "famiglia like '%{$multicampo}%'";
+      break;
+    case 'nom_com':
+      $query .= "nomecomune like '%{$multicampo}%'";
+      break;
+    }  
+
+	$query .= "ORDER BY genere, specie";
+}
+
+$result = mysql_query($query, $db);
+?>
+
+<head>
+  <link rel="shortcut icon" href="http://www.funghiitaliani.it/style_images/immaginiit/favicon.ico" >
+</head>
+
+<table width="64" border="0" cellspacing="0" cellpadding="0" height="13">
+  <tr height="13">
+    <td width="64" height="13"></td>
+  </tr>
+</table>
+
+<table class="Table_Corpo" width="980">
+  <tr>
+    <td>
+      <div class="Testo3" align="center">
+          <br/>
+              <table width="765" border="0" cellspacing="0" cellpadding="1" bgcolor="#192847" style="border:1px solid #ffffff">
+                <tr>
+                  <td width="765">
+                    <div align="center">
+                            <table width="760" border="0" cellspacing="0" cellpadding="4" bgcolor="#192847">
+                              <tr>
+                                <td width="760">
+                                  <div align="center">
+                                          <table width="745" border="0" cellspacing="3" cellpadding="0">
+                                            <tr height="25">
+                                              <td bgcolor="#4d9661" width="26" height="25" style="border:1px solid #ffffff">
+                                                <div align="center">
+                                                  <a class="link3" href="index.php?letter=A&selezione=<? echo "$selezione"; ?>">A</a>
+                                                </div>
+                                              </td>
+                                              <td bgcolor="#4d9661" width="26" height="25" style="border:1px solid #ffffff">
+                                                <div align="center">
+                                                  <a class="link3" href="index.php?letter=B&selezione=<? echo "$selezione"; ?>">B</a>
+                                                </div>
+                                              </td>                                            
+                                              <td bgcolor="#4d9661" width="26" height="25" style="border:1px solid #ffffff">                                            
+                                                <div align="center">                                            
+                                                  <a class="link3" href="index.php?letter=C&selezione=<? echo "$selezione"; ?>">C</a>
+                                                </div>
+                                              </td>                                            
+                                              <td bgcolor="#4d9661" width="26" height="25" style="border:1px solid #ffffff">                                            
+                                                <div align="center">                                            
+                                                  <a class="link3" href="index.php?letter=D&selezione=<? echo "$selezione"; ?>">D</a>
+                                                </div>                                            
+                                              </td>                                            
+                                              <td bgcolor="#4d9661" width="26" height="25" style="border:1px solid #ffffff">                                            
+                                                <div align="center">                                            
+                                                  <a class="link3" href="index.php?letter=E&selezione=<? echo "$selezione"; ?>">E</a>
+                                                </div>                                            
+                                              </td>                                            
+                                              <td bgcolor="#4d9661" width="26" height="25" style="border:1px solid #ffffff">                                            
+                                               <div align="center">                                            
+                                                 <a class="link3" href="index.php?letter=F&selezione=<? echo "$selezione"; ?>">F</a>
+                                               </div>                                            
+                                               </td>                                            
+                                              <td bgcolor="#4d9661" width="26" height="25" style="border:1px solid #ffffff">                                            
+                                                <div align="center">                                            
+                                                  <a class="link3" href="index.php?letter=G&selezione=<? echo "$selezione"; ?>">G</a>
+                                                </div>                                            
+                                              </td>                                            
+                                              <td bgcolor="#4d9661" width="26" height="25" style="border:1px solid #ffffff">                                            
+                                                <div align="center">                                            
+                                                  <a class="link3" href="index.php?letter=H&selezione=<? echo "$selezione"; ?>">H</a>
+                                                </div>                                            
+                                              </td>                                            
+                                              <td bgcolor="#4d9661" width="26" height="25" style="border:1px solid #ffffff">                                            
+                                                <div align="center">                                            
+                                                  <a class="link3" href="index.php?letter=I&selezione=<? echo "$selezione"; ?>">I</a>
+                                                </div>                                            
+                                              </td>                                            
+                                              <td bgcolor="#4d9661" width="26" height="25" style="border:1px solid #ffffff">                                            
+                                                <div align="center">                                            
+                                                  <a class="link3" href="index.php?letter=J&selezione=<? echo "$selezione"; ?>">J</a>
+                                                </div>                                            
+                                              </td>                                            
+                                              <td bgcolor="#4d9661" width="26" height="25" style="border:1px solid #ffffff">                                            
+                                                <div align="center">                                                                                              
+                                                  <a class="link3" href="index.php?letter=K&selezione=<? echo "$selezione"; ?>">K</a>
+                                                </div>                                            
+                                              </td>                                            
+                                              <td bgcolor="#4d9661" width="26" height="25" style="border:1px solid #ffffff">                                            
+                                                <div align="center">                                            
+                                                  <a class="link3" href="index.php?letter=L&selezione=<? echo "$selezione"; ?>">L</a>
+                                                </div>                                            
+                                              </td>                                            
+                                              <td bgcolor="#4d9661" width="26" height="25" style="border:1px solid #ffffff">                                            
+                                                <div align="center">                                            
+                                                  <a class="link3" href="index.php?letter=M&selezione=<? echo "$selezione"; ?>">M</a>
+                                                </div>                                            
+                                              </td>                                            
+                                              <td bgcolor="#4d9661" width="26" height="25" style="border:1px solid #ffffff">                                            
+                                                <div align="center">                                            
+                                                  <a class="link3" href="index.php?letter=N&selezione=<? echo "$selezione"; ?>">N</a>
+                                                </div>                                            
+                                              </td>                                            
+                                              <td bgcolor="#4d9661" width="26" height="25" style="border:1px solid #ffffff">                                            
+                                                <div align="center">                                            
+                                                  <a class="link3" href="index.php?letter=O&selezione=<? echo "$selezione"; ?>">O</a>
+                                                </div>                                            
+                                              </td>                                            
+                                              <td bgcolor="#4d9661" width="26" height="25" style="border:1px solid #ffffff">                                            
+                                                <div align="center">                                            
+                                                  <a class="link3" href="index.php?letter=P&selezione=<? echo "$selezione"; ?>">P</a>
+                                                </div>                                            
+                                              </td>                                            
+                                              <td bgcolor="#4d9661" width="26" height="25" style="border:1px solid #ffffff">                                            
+                                                <div align="center">                                            
+                                                  <a class="link3" href="index.php?letter=Q&selezione=<? echo "$selezione"; ?>">Q</a>
+                                                </div>                                            
+                                              </td>                                            
+                                              <td bgcolor="#4d9661" width="26" height="25" style="border:1px solid #ffffff">                                            
+                                                <div align="center">                                            
+                                                  <a class="link3" href="index.php?letter=R&selezione=<? echo "$selezione"; ?>">R</a>
+                                                </div>                                            
+                                              </td>                                            
+                                              <td bgcolor="#4d9661" width="26" height="25" style="border:1px solid #ffffff">                                            
+                                                <div align="center">                                            
+                                                  <a class="link3" href="index.php?letter=S&selezione=<? echo "$selezione"; ?>">S</a>
+                                                </div>                                            
+                                              </td>                                            
+                                              <td bgcolor="#4d9661" width="26" height="25" style="border:1px solid #ffffff">                                           
+                                                <div align="center">                                            
+                                                  <a class="link3" href="index.php?letter=T&selezione=<? echo "$selezione"; ?>">T</a>
+                                                </div>                                            
+                                              </td>                                            
+                                              <td bgcolor="#4d9661" width="26" height="25" style="border:1px solid #ffffff">                                            
+                                                <div align="center">                                            
+                                                  <a class="link3" href="index.php?letter=U&selezione=<? echo "$selezione"; ?>">U</a>
+                                                </div>                                            
+                                              </td>                                            
+                                              <td bgcolor="#4d9661" width="26" height="25" style="border:1px solid #ffffff">                                            
+                                                <div align="center">                                            
+                                                  <a class="link3" href="index.php?letter=V&selezione=<? echo "$selezione"; ?>">V</a>
+                                                </div>                                            
+                                              </td>                                            
+                                              <td bgcolor="#4d9661" width="26" height="25" style="border:1px solid #ffffff">                                            
+                                                <div align="center">                                            
+                                                  <a class="link3" href="index.php?letter=W&selezione=<? echo "$selezione"; ?>">W</a>
+                                                </div>                                            
+                                              </td>                                            
+                                              <td bgcolor="#4d9661" width="26" height="25" style="border:1px solid #ffffff">                                            
+                                                <div align="center">                                            
+                                                  <a class="link3" href="index.php?letter=X&selezione=<? echo "$selezione"; ?>">X</a>
+                                                </div>                                            
+                                              </td>                                            
+                                              <td bgcolor="#4d9661" width="26" height="25" style="border:1px solid #ffffff">                                            
+                                                <div align="center">                                            
+                                                  <a class="link3" href="index.php?letter=Y&selezione=<? echo "$selezione"; ?>">Y</a>
+                                                </div>                                            
+                                              </td>                                            
+                                              <td bgcolor="#4d9661" width="26" height="25" style="border:1px solid #ffffff">                                            
+                                                <div align="center">                                            
+                                                 <a class="link3" href="index.php?letter=Z&selezione=<? echo "$selezione"; ?>">Z</a>
+                                                </div>                                            
+                                              </td>                                            
+                                            </tr>                                            
+                                          </table>                                            
+                                  </div>
+                                </td>
+                              </tr>
+                            </table>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+          <br/>
+          <table class="Table_Filtro" border="0" cellspacing="2" cellpadding="0" style="border:1px solid #ffffff">
+            <tr>
+              <td>
+                <div align="center"><b>Selezione Filtro (Clicca sull'icona)</b></div>               
+              </td>
+            </tr>
+          </table>
+          <table class"Table_Corpo" width="739" border="0" cellspacing="2" cellpadding="0">
+            <tr>
+              <td valign="top" width="50%">
+                      <table class="Testo3" width="438" border="0" cellspacing="2" cellpadding="0">
+                        <tr height="26">
+                          <td width="38" height="26">
+                            <div align="center">
+                               <a class="link" href="index.php?filtro=amint&selezione=<? echo "$selezione"; ?>">                            
+                                <img src="images/scheda1.gif" alt="" height="21" width="25" border="0">
+                               </a>
+                            </div>                            
+                          </td>                            
+                          <td width="394" height="26" style="color:#192847">Schede standard secondo schema AMINT</td>                           
+                        </tr>                            
+                        <tr height="26">                           
+                          <td width="38" height="26">                          
+                            <div align="center">
+                              <a class="link" href="index.php?filtro=breve&selezione=<? echo "$selezione"; ?>">                            
+                                <img src="images/scheda2.gif" alt="" height="21" width="25" border="0">
+                              </a>                            
+                            </div>                            
+                          </td>                           
+                          <td width="394" height="26" style="color:#192847">Schede ridotte (Foto e descrizione breve)</td>                            
+                        </tr>                            
+                        <tr height="26">                           
+                          <td width="38" height="26">                            
+                            <div align="center">
+                              <a class="link" href="index.php?filtro=sino&selezione=<? echo "$selezione"; ?>">                            
+                                <img src="images/scheda3.gif" alt="" height="21" width="25" border="0">
+                              </a>
+                            </div>                            
+                          </td>                           
+                          <td width="394" height="26" style="color:#192847">Scheda sotto altro nome (Sinonimi in corsivo)</td>                            
+                         </tr>                            
+                         <tr height="26">                            
+                           <td width="38" height="26"></td>                            
+                           <td width="394" height="26"></td>                                                        
+                         </tr>                          
+                      </table>
+               </td>
+               <td valign="top">
+                      <table class="Testo3" width="345" border="0" cellspacing="2" cellpadding="0">
+                        <tr height="22">                          
+                          <td width="39" height="22">                          
+                            <div align="center">
+                              <a class="link" href="index.php?filtro=offi&selezione=<? echo "$selezione"; ?>">                          
+                              <!--
+                              <img src="images/bollino1.gif" alt="" height="12" width="12" border="0">                         
+                              -->
+                              PO
+                              </a>
+                            </div>                        
+                          </td>                          
+                          <td width="300" height="22" style="color:#192847">Piante officinali - Aromatiche e cosmetiche</td>                          
+                        </tr>                         
+                        <tr height="22">                          
+                          <td width="39" height="22">                          
+                            <div align="center">
+                              <a class="link" href="index.php?filtro=comme&selezione=<? echo "$selezione"; ?>">
+                              <!--
+                              <img src="images/bollino1.gif" alt="" height="12" width="12" border="0">
+                              -->
+                              PC
+                              </a>
+                            </div>
+                          </td>                          
+                          <td width="300" height="22" style="color:#192847">Piante commestibili</td>                          
+                        </tr>                         
+                        <tr height="22">                          
+                          <td width="39" height="22">                          
+                            <div align="center">
+                              <a class="link" href="index.php?filtro=commeoffi&selezione=<? echo "$selezione"; ?>">
+                                <!--
+                                <img src="images/bollino1a.gif" alt="" height="12" width="12" border="0">
+                                -->
+                                PCO
+                              </a>
+                            </div>
+                         </td>                          
+                         <td width="300" height="22" style="color:#192847">Piante commestibili e officinali</td>                          
+                        </tr>                         
+                        <tr height="22">                          
+                          <td width="39" height="22">                          
+                            <div align="center">
+                              <a class="link" href="index.php?filtro=vele&selezione=<? echo "$selezione"; ?>">
+                                <!--
+                                <img src="images/bollino2.gif" alt="" height="12" width="12" border="0">
+                                -->
+                                PV
+                              </a>
+                            </div>
+                          </td>                          
+                          <td width="300" height="22" style="color:#192847">Piante velenose</td>                          
+                        </tr>                          
+                        <tr height="22">                          
+                          <td width="39" height="22">                          
+                            <div align="center">
+                              <a class="link" href="index.php?filtro=veleoffi&selezione=<? echo "$selezione"; ?>">
+                                <!--
+                                <img src="images/bollino3.gif" alt="" height="12" width="12" border="0">
+                                -->
+                                PVO
+                              </a>
+                            </div>
+                          </td>                          
+                          <td width="300" height="22" style="color:#192847">Piante velenose e officinali</td>                          
+                        </tr>                          
+                        <tr height="22">                         
+                          <td width="39" height="22">                          
+                            <div align="center">
+                              <a class="link" href="index.php?filtro=senza&selezione=<? echo "$selezione"; ?>">
+                                <!--
+                                <img src="images/bollino3a.gif" alt="" height="12" width="12" border="0">
+                                -->
+                                P
+                              </a>
+                            </div>
+                          </td>                         
+                          <td width="300" height="22" style="color:#192847">Pianta senza indicazioni di propriet&agrave;</td>                          
+                        </tr>                          
+                        <tr height="22">                          
+                          <td width="39" height="22"></td>                          
+                          <td width="300" height="22"></td>                          
+                        </tr>
+                          
+                      </table>
+               </td>
+            </tr>
+          </table>
+          <br />
+          <table class="Table_Filtro" border="0" cellspacing="2" cellpadding="0" style="border:1px solid #ffffff">
+            <tr>
+              <td>
+                <div align="center"><b>Ricerca Scheda</b> (digitare solo una parola: il Genere, la Specie, la Famiglia o il Nome comune)</div>
+              </td>
+            </tr>
+          </table>
+          <form method="get" action="index.php" style="padding:0;margin:0;margin-right:100px;">
+            <div style="margin-top:10px;text-align:right;">
+              <input name="cerca_generale" value="Trova Scheda" type="image" src="images/search32.png" alt="Trova Scheda" style="vertical-align:bottom;"/>
+              <input name="multicampo" type="text" size=50 onChange="n = 0;">
+            </div>
+            <div style="font-size:11px;text-align:right;font-weight:bold;">
+              <input type="radio" name="tipo" value="genere" checked/>Genere
+              <input type="radio" name="tipo" value="specie"/>Specie
+              <input type="radio" name="tipo" value="famiglia"/>Famiglia
+              <input type="radio" name="tipo" value="nom_com"/>Nome comune
+            </div>              
+            <br/>
+            <br/>
+            <br/>
+            <!--
+            <input name="cerca_generale" type="submit" value="Trova Scheda">
+            -->
+          </form>
+      </div>
+    </td>
+  </tr>
+</table>
+
+<table class="Table_Coda" width="980">
+  <tr height="30">
+    <td width="976" height="30">
+      <div class="Testo3" align="center">
+              <table width="942" border="0" cellspacing="2" cellpadding="0">
+                <tr>                
+                  <td width="33%">
+                    <div align="center">
+                      <a class="link" href="index.php?selezione=link1">Lista Schede suddivise per Genere</a>
+                    </div>
+                  </td>                
+                  <td>
+                    <div align="center">
+                      <a class="link" href="index.php?selezione=link2">Lista Schede ordinata per Specie</a>
+                    </div>
+                  </td>                
+                  <td width="33%">
+                    <div align="center">
+                      <a class="link" href="index.php?selezione=link3">Lista Schede ordinata per Nome comune</a>
+                    </div>
+                  </td>                
+                </tr>                
+              </table>
+      </div>
+    </td>
+  </tr>
+</table>
+<br/>
+
+<table class="Table_Titolo" width="980" height="60" style="border:1px solid #ffffff">
+  <tr height="60">
+    <td height="60">
+      <div align="center" style="font-size:16px;">
+        <b>Indice delle Schede botaniche ordinate per 
+          <? 
+           switch ($selezione)
+            {
+              case 'link1':
+                echo "Genere";
+                break;
+              case 'link2':
+                echo "Specie";
+                break;
+              case 'link3':
+                echo "Nome comune";
+                break;
+            }
+          ?>
+        </b>
+      </div>
+    </td>
+  </tr>
+</table>
+
+<table class="Table_Corpo" width="980">
+  <tr>
+    <td>
+      <div class="Testo3" align="center">
+              <table width="970" border="0" cellspacing="0" cellpadding="1" bgcolor="#FFFFFF" height="26">
+                <tr height="26">                       
+                  <td width="970" height="26">                        
+                    <div align="center">
+                            <table width="970" border="0" cellspacing="0" cellpadding="0" bgcolor="#FFFFFF">                        
+                              <tr>                        
+                                <td width="970">                                    
+                                  <div align="center">                                    
+                                          <table class="Testo0" width="970" border="0" cellspacing="2" cellpadding="4" style="border:1px solid #ffffff">                                    
+                                            <tr height="26">                                                                
+                                              <td class="testo2" bgcolor="#192847" width="48" height="26"><div align="center">Scheda</div></td>                                                                
+                                              <td class="testo2" bgcolor="#192847" width="130" height="26"><div align="center"><? echo "$colonna1"; ?></div></td>                                                               
+                                              <td class="testo2" bgcolor="#192847" width="130" height="26"><div align="center"><? echo "$colonna2"; ?></div></td>                                                                
+                                              <td class="testo2" bgcolor="#192847" width="100" height="26"><div align="center">Autore</div></td>                                              
+                                              <td class="testo2" bgcolor="#192847" width="30" height="26"><div align="center">Com.</div></td>                                              
+                                              <td class="testo2" bgcolor="#192847" width="130" height="26"><div align="center">Famiglia</div></td>                                              
+                                              <td class="testo2" bgcolor="#192847" width="130" height="26"><div align="center">Nome comune</div></td>                                              
+                                              <td class="testo2" bgcolor="#192847" height="30"><div align="center">Aggior.</div></td>                                              
+                                            </tr>                                              
+                                              <?
+                                                while ($row = mysql_fetch_array($result))
+                                                {                                                
+                                                switch ($selezione)
+                                                  {
+                                                  case 'link1':
+                                                    $campo1=$row[genere];
+                                                    $campo2=$row[specie];
+                                                    break;
+                                                  case 'link2':
+                                                    $campo2=$row[genere];
+                                                    $campo1=$row[specie];
+                                                    break;
+                                                  case 'link3':
+                                                    $campo1=$row[genere];
+                                                    $campo2=$row[specie];                                                                                                      
+                                                  }                                                
+                                              ?>                                                                                                
+                                            <tr height="21">                                                
+                                              <td bgcolor="#eef3f7" width="48" height="21"><div align="center">&nbsp;
+                                                <?
+                                                  switch ($row[scheda])
+                                                  {
+                                                  case 'B':
+                                                    if ($row[datains]<$ultimoins)
+                                                    {
+                                                    ?>
+                                                      <img src="images/scheda2.gif" alt="" height="21" width="25" border="0"/>
+                                                      <?
+                                                    }
+                                                    else 
+                                                    {
+                                                    ?>
+                                                      <img src="images/scheda2_ani.gif" alt="" height="21" width="25" border="0"/>
+                                                    <?
+                                                    }
+                                                    break;
+                                                  case 'A':
+                                                    if ($row[datains]<$ultimoins)
+                                                    {
+                                                    ?>
+                                                      <img src="images/scheda1.gif" alt="" height="21" width="25" border="0"/>
+                                                    <?
+                                                    }
+                                                    else 
+                                                    {
+                                                    ?>
+                                                    <img src="images/scheda1_ani.gif" alt="" height="21" width="25" border="0"/>
+                                                    <?
+                                                    }
+                                                    break;
+                                                  case 'S':
+                                                    if ($row[datains]<$ultimoins)
+                                                    {
+                                                    ?>
+                                                      <img src="images/scheda3.gif" alt="" height="21" width="25" border="0"/>
+                                                    <?
+                                                    }
+                                                    else 
+                                                    {
+                                                    ?>
+                                                      <img src="images/scheda3_ani.gif" alt="" height="21" width="25" border="0"/>
+                                                    <?
+                                                    }
+                                                    break;
+                                                  }
+                                                  ?>
+                                              </td>                        
+                                              <td bgcolor="#eef3f7" width="130" height="21" >&nbsp;
+                                              <?
+                                              if ($row[scheda]=='S')
+                                              {
+                                              ?>
+                                                <a class="linkblu" href="http://www.funghiitaliani.it/index.php?showtopic=<? echo "$row[topic]"?>"><? echo "$campo1"?></a>
+                                              <?
+                                              }
+                                              else 
+                                              {
+                                              ?>
+                                                <a class="link20" href="http://www.funghiitaliani.it/index.php?showtopic=<? echo "$row[topic]"?>"><? echo "$campo1"?></a>
+                                              <?
+                                              }
+                                              ?>
+                                              </td>
+                                              <?
+                                              if ($row[scheda]=='S')
+                                              {
+                                              ?>
+                                              <td class="testoblu" bgcolor="#eef3f7" width="130" height="21">&nbsp;<? echo "$campo2"?></td>
+                                              <?
+                                              }
+                                              else 
+                                              {
+                                              ?>
+                                              <td class="testoverde" bgcolor="#eef3f7" width="130" height="21">&nbsp;<? echo "$campo2"?></td>
+                                              <?
+                                              }
+                                              ?>                                                  
+                                              <td bgcolor="#eef3f7" width="100" height="21">&nbsp;<?echo "$row[autore]";?></td>
+                                              <td bgcolor="#eef3f7" width="30" height="21">&nbsp;<?echo "$row[ca]";?></td>                                                  
+                                              <!--
+                                              <td bgcolor="#eef3f7" width="30" height="21"><div align="center">&nbsp;<?
+                                              switch ($row[ca]){
+                                              case 'C':
+                                              ?>
+                                              <img src="images/bollino1.gif" alt="" height="12" width="12" border="0">
+                                              <?
+                                              break;
+                                              case 'N':
+                                              ?>
+                                              <img src="images/bollino2.gif" alt="" height="12" width="12" border="0">
+                                              <?
+                                              break;
+                                              case 'V':
+                                              ?>
+                                              <img src="images/bollino3.gif" alt="" height="12" width="12" border="0">
+                                              <?
+                                              break;
+                                              case 'C1':
+                                              ?>
+                                              <img src="images/bollino1a.gif" alt="" height="12" width="12" border="0">
+                                              <?
+                                              break;
+                                              case 'M':
+                                              ?>
+                                              <img src="images/bollino3a.gif" alt="" height="12" width="12" border="0">
+                                              <?
+                                              break;
+                                              }
+                                              ?>
+                                              </td>
+                                              -->
+                                              <td bgcolor="#eef3f7" width="130" height="21">&nbsp;<?echo "$row[famiglia]";?></td>                                                  
+                                              <td bgcolor="#eef3f7" width="130" height="21">&nbsp;<?echo "$row[nomecomune]";?></td>                                                 
+                                              <td bgcolor="#eef3f7" width="30" height="21">&nbsp;
+                                              <?
+                                              if ($row[datains]==0) 
+                                              {
+                                                echo "";
+                                              }
+                                              else 
+                                              {
+                                                echo substr($row[datains], 6, 2);
+                                                echo "/";
+                                                echo substr($row[datains], 4, 2);
+                                                echo "/";
+                                                echo substr($row[datains], 0, 4);
+                                              }
+                                              ?>
+                                              </td>                        
+                                              <?
+                                              }
+                                              mysql_close($db);                                            
+                                              ?>                        
+                                            </tr>
+                                          </table>                        
+                                  </div>                        
+                                </td>                        
+                              </tr>
+                            </table>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+      </div>
+    </td>
+  </tr>
+</table>
+<?
+foot();
+?>
